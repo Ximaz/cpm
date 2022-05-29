@@ -6,6 +6,8 @@
 #include "../include/error.h"
 #include "../include/parser.h"
 
+#define DEBUG 0
+
 unsigned char is_valid_section(char *buffer)
 {
     if (strcmp(buffer, "INFO") == 0)
@@ -22,14 +24,26 @@ unsigned char set_config_info(Config *config, char *field)
 
     if (!set)
         return !success;
-    if (strcmp(set->key, "author") == 0)
-        config->author = set->value;
-    else if (strcmp(set->key, "name") == 0)
-        config->name = set->value;
-    else if (strcmp(set->key, "description") == 0)
-        config->description = set->value;
-    else if (strcmp(set->key, "version") == 0)
-        config->version = set->value;
+    if (strcmp(set->key, "name") == 0 && !config->name)
+    {
+        config->name = (char *) malloc(sizeof(char) * strlen(set->value));
+        strcpy(config->name, set->value);
+    }
+    else if (strcmp(set->key, "description") == 0 && !config->description)
+    {
+        config->description = (char *) malloc(sizeof(char) * strlen(set->value));
+        strcpy(config->description, set->value);
+    }
+    else if (strcmp(set->key, "version") == 0 && !config->version)
+    {
+        config->version = (char *) malloc(sizeof(char) * strlen(set->value));
+        strcpy(config->version, set->value);
+    }
+    else if (strcmp(set->key, "author") == 0 && !config->author)
+    {
+        config->author = (char *) malloc(sizeof(char) * strlen(set->value));
+        strcpy(config->author, set->value);
+    }
     else
         success = 0;
     destroy_set(set);
@@ -39,11 +53,25 @@ unsigned char set_config_info(Config *config, char *field)
 unsigned char set_config_dependency(Config *config, char *field, unsigned char dependency_index)
 {
     Set *set = new_set(field);
-    if (!set)
+    Dependency *dependency = (Dependency *)malloc(sizeof(Dependency));
+
+    if (dependency_index == DEPENDENCIES_LIMIT)
+    {
+        perror(_CPM_LIMIT_DEPENDENCY);
+        free(dependency);
         return 0;
-    Dependency *dependency = (Dependency *) malloc(sizeof(Dependency));
-    dependency->name = set->key;
-    dependency->version = set->value;
+    }
+    if (!set)
+    {
+        free(dependency);
+        return 0;
+    }
+    if (!dependency)
+        return 0;
+    dependency->name = (char *) malloc(sizeof(char) * strlen(set->key));
+    dependency->version = (char *) malloc(sizeof(char) * strlen(set->value));
+    strcpy(dependency->name, set->key);
+    strcpy(dependency->version, set->value);
     config->dependencies[dependency_index] = dependency;
     destroy_set(set);
     return 1;
@@ -56,17 +84,34 @@ char *reset_buffer(char *buffer, size_t length)
     return buffer;
 }
 
+size_t longest_line_length(char *str)
+{
+    size_t h = 0;
+    size_t c = 0;
+
+    for (size_t i = 0; i < strlen(str); i++)
+        if (str[i] == '\n')
+        {
+            if (c > h)
+                h = c;
+            c = 0;
+        }
+        else
+            c++;
+    return (c > h) ? c : h;
+}
+
 unsigned char parse_cpm_config(char *raw_config, Config *config)
 {
-    size_t raw_config_length = strlen(raw_config);
     int buffer_i = 0;
-    char *buffer = (char *) malloc(sizeof(char) * raw_config_length);
+    size_t max_buffer_length = longest_line_length(raw_config);
+    char *buffer = (char *)malloc(sizeof(char) * max_buffer_length);
     Section current_section = NONE;
     unsigned char c;
     unsigned char is_reading_section_name = 0;
     unsigned char dependencies_counter = 0;
 
-    for (size_t i = 0; i < raw_config_length; i++)
+    for (size_t i = 0; i < strlen(raw_config); i++)
     {
         c = raw_config[i];
         if (c == '\n' || c == 0)
@@ -76,7 +121,7 @@ unsigned char parse_cpm_config(char *raw_config, Config *config)
             buffer_i = 0;
             if (is_valid_section(buffer))
             {
-                buffer = reset_buffer(buffer, raw_config_length);
+                buffer = reset_buffer(buffer, max_buffer_length);
                 continue;
             }
             if (current_section == INFO)
@@ -93,7 +138,7 @@ unsigned char parse_cpm_config(char *raw_config, Config *config)
                     free(buffer);
                     return 2;
                 }
-            buffer = reset_buffer(buffer, raw_config_length);
+            buffer = reset_buffer(buffer, max_buffer_length);
         }
         if (c == '[' && buffer_i == 0)
         {

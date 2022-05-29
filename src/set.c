@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../include/set.h"
@@ -49,4 +50,14 @@ void destroy_set(Set *set)
     free(set->key);
     free(set->value);
     free(set);
+}
+
+void display_set(Set *set)
+{
+    if (set->key)
+        printf("%s", set->key);
+    printf("=");
+    if (set->value)
+        printf("%s", set->value);
+    printf("\n");
 }

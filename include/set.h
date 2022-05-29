@@ -9,5 +9,6 @@ typedef struct s_set
 
 Set *new_set(char *str);
 void destroy_set(Set *set);
+void display_set(Set *set);
 
 #endif

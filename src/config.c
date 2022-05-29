@@ -67,11 +67,15 @@ void show_config(Config *config)
     int i = 0;
     Dependency *d = NULL;
 
-    printf("Name : %s\n", config->name);
-    printf("Description : %s\n", config->description);
-    printf("Author : %s\n", config->author);
-    printf("Version : %s\n", config->version);
-    while ((d = config->dependencies[i++]))
+    if (config->name)
+        printf("Name : %s\n", config->name);
+    if (config->description)
+        printf("Description : %s\n", config->description);
+    if (config->author)
+        printf("Author : %s\n", config->author);
+    if (config->version)
+        printf("Version : %s\n", config->version);
+    while (i < DEPENDENCIES_LIMIT && (d = config->dependencies[i++]))
         printf("Dependency n°%d : %s==%s\n", i, d->name, d->version);
 }
 
@@ -86,7 +90,7 @@ void destroy_config(Config *config)
     free(config->description);
     free(config->author);
     free(config->version);
-    while ((d = config->dependencies[i++]))
+    while (i < DEPENDENCIES_LIMIT && (d = config->dependencies[i++]))
     {
         free(d->name);
         free(d->version);
@@ -107,7 +111,11 @@ Config *new_config(char const *path)
         free(raw_config);
         return NULL;
     }
-    config->dependencies = (Dependency **) calloc(1, sizeof(Dependency *));
+    config->name = NULL;
+    config->description = NULL;
+    config->version = NULL;
+    config->author = NULL;
+    config->dependencies = (Dependency **)calloc(DEPENDENCIES_LIMIT, sizeof(Dependency *));
     result = parse_cpm_config(raw_config, config);
     free(raw_config);
     if (result != 0)
