@@ -71,6 +71,8 @@ unsigned char parse_cpm_conf(char *raw_conf, Config *conf)
         c = raw_conf[i];
         if (c == '\n')
         {
+            if (buffer_i == 0)
+                continue;
             buffer_i = 0;
             if (is_valid_section(buffer))
             {
