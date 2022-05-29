@@ -21,20 +21,16 @@ char *read_cpm_conf(char const *path)
 
     if (!fp)
     {
-        printf(_CPM_CONF_FILE_NOT_FOUND, _CPM_CONF_FILE);
+        perror(_CPM_PERM_ERR);
         return NULL;
     }
     length = get_file_length(fp);
     buffer = (char *)malloc(sizeof(char) * length);
     if (!buffer)
-    {
-        printf(_CPM_CONF_FILE_READING, _CPM_CONF_FILE);
         return NULL;
-    }
     if (fread(buffer, 1, length, fp) < length)
     {
         free(buffer);
-        printf(_CPM_CONF_FILE_READING_TO_END, _CPM_CONF_FILE);
         return NULL;
     }
     fclose(fp);

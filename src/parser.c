@@ -15,7 +15,7 @@ unsigned char is_valid_section(char *buffer)
     return 0;
 }
 
-unsigned char set_conf_info(Config *conf, char *field)
+unsigned char set_config_info(Config *config, char *field)
 {
     Set *set = new_set(field);
     unsigned char success = 1;
@@ -23,20 +23,20 @@ unsigned char set_conf_info(Config *conf, char *field)
     if (!set)
         return !success;
     if (strcmp(set->key, "author") == 0)
-        conf->author = set->value;
+        config->author = set->value;
     else if (strcmp(set->key, "name") == 0)
-        conf->name = set->value;
+        config->name = set->value;
     else if (strcmp(set->key, "description") == 0)
-        conf->description = set->value;
+        config->description = set->value;
     else if (strcmp(set->key, "version") == 0)
-        conf->version = set->value;
+        config->version = set->value;
     else
         success = 0;
     destroy_set(set);
     return success;
 }
 
-unsigned char set_conf_dependency(Config *conf, char *field, unsigned char dependency_index)
+unsigned char set_config_dependency(Config *config, char *field, unsigned char dependency_index)
 {
     Set *set = new_set(field);
     if (!set)
@@ -44,7 +44,7 @@ unsigned char set_conf_dependency(Config *conf, char *field, unsigned char depen
     Dependency *dependency = (Dependency *) malloc(sizeof(Dependency));
     dependency->name = set->key;
     dependency->version = set->value;
-    conf->dependencies[dependency_index] = dependency;
+    config->dependencies[dependency_index] = dependency;
     destroy_set(set);
     return 1;
 }
@@ -56,44 +56,44 @@ char *reset_buffer(char *buffer, size_t length)
     return buffer;
 }
 
-unsigned char parse_cpm_conf(char *raw_conf, Config *conf)
+unsigned char parse_cpm_config(char *raw_config, Config *config)
 {
-    size_t raw_conf_length = strlen(raw_conf);
+    size_t raw_config_length = strlen(raw_config);
     int buffer_i = 0;
-    char *buffer = (char *) malloc(sizeof(char) * raw_conf_length);
+    char *buffer = (char *) malloc(sizeof(char) * raw_config_length);
     Section current_section = NONE;
     unsigned char c;
     unsigned char is_reading_section_name = 0;
     unsigned char dependencies_counter = 0;
 
-    for (size_t i = 0; i < raw_conf_length; i++)
+    for (size_t i = 0; i < raw_config_length; i++)
     {
-        c = raw_conf[i];
-        if (c == '\n')
+        c = raw_config[i];
+        if (c == '\n' || c == 0)
         {
             if (buffer_i == 0)
                 continue;
             buffer_i = 0;
             if (is_valid_section(buffer))
             {
-                buffer = reset_buffer(buffer, raw_conf_length);
+                buffer = reset_buffer(buffer, raw_config_length);
                 continue;
             }
             if (current_section == INFO)
-                if (!set_conf_info(conf, buffer))
+                if (!set_config_info(config, buffer))
                 {
                     printf("PARSE ERROR [INFO] : %s\n", buffer);
                     free(buffer);
                     return 1;
                 }
             if (current_section == DEPENDENCIES)
-                if (!set_conf_dependency(conf, buffer, dependencies_counter++))
+                if (!set_config_dependency(config, buffer, dependencies_counter++))
                 {
                     printf("PARSE ERROR [DEPENDENCIES] : %s\n", buffer);
                     free(buffer);
                     return 2;
                 }
-            buffer = reset_buffer(buffer, raw_conf_length);
+            buffer = reset_buffer(buffer, raw_config_length);
         }
         if (c == '[' && buffer_i == 0)
         {
@@ -122,6 +122,6 @@ unsigned char parse_cpm_conf(char *raw_conf, Config *conf)
     return 0;
 }
 
-// void write_cpm_conf(Config *config, char const *path)
+// void write_cpm_config(Config *config, char const *path)
 // {
 // }

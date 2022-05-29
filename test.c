@@ -4,9 +4,10 @@
 
 int main(void)
 {
-    // init_modules_folder();
-    Config *conf = get_cpm_conf("cpm.example.conf");
-    show_conf(conf);
-    free_config(conf);
+    Config *config = new_config("cpm.example.conf");
+    if (!config)
+        return 1;
+    show_config(config);
+    destroy_config(config);
     return 0;
 }

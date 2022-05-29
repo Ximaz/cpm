@@ -1,12 +1,13 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include "../include/error.h"
 #include "../include/config.h"
 #include "../include/parser.h"
 #include "../include/util.h"
 
-unsigned char chk_mod_folder_stat()
+unsigned char module_folder_exists()
 {
     struct stat stats;
 
@@ -14,7 +15,7 @@ unsigned char chk_mod_folder_stat()
     return S_ISDIR(stats.st_mode) > 0;
 }
 
-unsigned char chk_conf_stat()
+unsigned char conf_exists()
 {
     struct stat stats;
 
@@ -22,87 +23,97 @@ unsigned char chk_conf_stat()
     return S_ISREG(stats.st_mode) > 0;
 }
 
-unsigned char init_modules_folder()
-{
-    if (!chk_mod_folder_stat())
-        mkdir(_CPM_MOD_FOLDER, _CPM_PERMS);
-    if (!chk_mod_folder_stat())
-    {
-        printf(_CPM_MOD_FOLDER_NOT_CREATED, _CPM_MOD_FOLDER);
-        return 1;
-    }
-    return 0;
-}
-
-unsigned char init_cpm_conf()
+// Function to create the cpm.conf file.
+// As the same way as npm does, this file
+// will contain the project's name,
+// description, author, version and most of
+// all, dependencies.
+// Also create the modules folder.
+// This location will contain all installed
+// dependencies from the cpm.conf file.
+unsigned char init()
 {
     FILE *fp = NULL;
 
-    if (chk_conf_stat())
+    if (!module_folder_exists())
+        mkdir(_CPM_MOD_FOLDER, _CPM_PERMS);
+    if (!module_folder_exists())
+    {
+        perror(_CPM_PERM_ERR);
+        return 1;
+    }
+    if (conf_exists())
         return 0;
     fp = fopen(_CPM_CONF_FILE, "w+");
     if (fp == NULL)
     {
-        printf(_CPM_CONF_FILE_NOT_CREATED, _CPM_CONF_FILE);
+        perror(_CPM_PERM_ERR);
         return 1;
     }
+    fwrite(DEFAULT_CONFIG, 1, strlen(DEFAULT_CONFIG), fp);
     fclose(fp);
+    if (!conf_exists())
+    {
+        perror(_CPM_PERM_ERR);
+        return 1;
+    }
     return 0;
 }
 
-void show_conf(Config *conf)
+// Function to display an existing config
+// in the console.
+void show_config(Config *config)
 {
     int i = 0;
     Dependency *d = NULL;
 
-    printf("Name : %s\n", conf->name);
-    printf("Description : %s\n", conf->description);
-    printf("Author : %s\n", conf->author);
-    printf("Version : %s\n", conf->version);
-    while ((d = conf->dependencies[i++]))
-    {
-        printf("Dep %d : %s - %s\n", i, d->name, d->version);
-    }
+    printf("Name : %s\n", config->name);
+    printf("Description : %s\n", config->description);
+    printf("Author : %s\n", config->author);
+    printf("Version : %s\n", config->version);
+    while ((d = config->dependencies[i++]))
+        printf("Dependency n°%d : %s==%s\n", i, d->name, d->version);
 }
 
-void free_config(Config *conf)
+// Function to free the config the cleanest
+// way possible.
+void destroy_config(Config *config)
 {
     int i = 0;
     Dependency *d = NULL;
 
-    free(conf->name);
-    free(conf->description);
-    free(conf->author);
-    free(conf->version);
-    while ((d = conf->dependencies[i++]))
+    free(config->name);
+    free(config->description);
+    free(config->author);
+    free(config->version);
+    while ((d = config->dependencies[i++]))
     {
         free(d->name);
         free(d->version);
         free(d);
     }
-    free(conf->dependencies);
-    free(conf);
+    free(config->dependencies);
+    free(config);
 }
 
-Config *get_cpm_conf(char const *path)
+Config *new_config(char const *path)
 {
-    Config *conf = (Config *)malloc(sizeof(Config));
-    char *raw_conf = read_cpm_conf(path);
+    Config *config = (Config *)malloc(sizeof(Config));
+    char *raw_config = read_cpm_conf(path);
     unsigned char result = 0;
 
-    if (!conf)
+    if (!config)
     {
-        free(raw_conf);
-        printf("%s", _CPM_CONF_STRUCT_MEM);
+        free(raw_config);
         return NULL;
     }
-    conf->dependencies = (Dependency **) calloc(1, sizeof(Dependency *));
-    result = parse_cpm_conf(raw_conf, conf);
-    free(raw_conf);
+    config->dependencies = (Dependency **) calloc(1, sizeof(Dependency *));
+    result = parse_cpm_config(raw_config, config);
+    free(raw_config);
     if (result != 0)
     {
-        free_config(conf);
+        destroy_config(config);
         return NULL;
     }
-    return conf;
+    return config;
 }
