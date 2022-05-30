@@ -4,7 +4,7 @@
 ##
 CC=gcc
 LIBFLAGS=-I./include -L./ -lcpm
-CFLAGS=-Wall -Wextra -Werror -pedantic -O3 -fsanitize=leak
+CFLAGS=-Wall -Wextra -Werror -pedantic -O3# -fsanitize=leak
 
 SRC=src/config.c \
 	src/parser.c \

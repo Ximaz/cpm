@@ -11,4 +11,4 @@ Set *new_set(char *str);
 void destroy_set(Set *set);
 void display_set(Set *set);
 
-#endif
+#endif // _CPM_SET_H_
