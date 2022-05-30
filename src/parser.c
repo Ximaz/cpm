@@ -111,7 +111,7 @@ unsigned char parse_cpm_config(char *raw_config, Config *config)
     unsigned char is_reading_section_name = 0;
     unsigned char dependencies_counter = 0;
 
-    for (size_t i = 0; i < strlen(raw_config); i++)
+    for (size_t i = 0; i < strlen(raw_config) + 1; i++)
     {
         c = raw_config[i];
         if (c == '\n' || c == 0)

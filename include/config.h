@@ -3,7 +3,7 @@
 
 #include "parser.h"
 // Limit of allowed dependencies for a project.
-#define DEPENDENCIES_LIMIT 1
+#define DEPENDENCIES_LIMIT 254
 // Example of configuration. Will be used at the init.
 #define DEFAULT_CONFIG "[INFO]\n\
 name=PROJECT_NAME\n\
