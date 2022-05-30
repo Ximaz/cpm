@@ -13,7 +13,8 @@ void get_key(char *str, Set *set)
         return;
     while ((c = str[i]) && c != '=' && c != '\n')
         key[i++] = c;
-    if (*key != 0) key[i++] = 0;
+    if (*key != 0)
+        key[i] = 0;
     set->key = (char *) malloc(sizeof(char) * i);
     strcpy(set->key, key);
     free(key);
@@ -37,7 +38,17 @@ void get_value(char *str, Set *set)
     i--;
     while ((c = str[i++]))
         value[j++] = c;
-    if (*value != 0) value[j++] = 0;
+    if (*value != 0)
+        value[j] = 0;
+    if (DELIM_QUOTES && value[0] == '"' && value[j - 1] == '"')
+    {
+        i = 1;
+        for (; i < j - 1; i++)
+            value[i - 1] = value[i];
+        --i;
+        value[i] = 0;
+        j = i;
+    }
     set->value = (char *) malloc(sizeof(char) * j);
     strcpy(set->value, value);
     free(value);

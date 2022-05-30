@@ -67,8 +67,8 @@ unsigned char set_config_dependency(Config *config, char *field, unsigned char d
     if (!dependency)
         return 0;
     dependency->name = (char *) malloc(sizeof(char) * strlen(set->key));
-    dependency->version = (char *) malloc(sizeof(char) * strlen(set->value));
     strcpy(dependency->name, set->key);
+    dependency->version = (char *) malloc(sizeof(char) * strlen(set->value));
     strcpy(dependency->version, set->value);
     config->dependencies[dependency_index] = dependency;
     destroy_set(set);

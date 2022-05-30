@@ -23,14 +23,10 @@ unsigned char conf_exists()
     return S_ISREG(stats.st_mode) > 0;
 }
 
-// Function to create the cpm.conf file.
-// As the same way as npm does, this file
-// will contain the project's name,
-// description, author, version and most of
-// all, dependencies.
-// Also create the modules folder.
-// This location will contain all installed
-// dependencies from the cpm.conf file.
+// Function to create the cpm.conf file. As the same way as npm does, this file
+// will contain the project's name, description, author, version and most of
+// all, dependencies. Also create the modules folder. This location will
+// contain all installed dependencies from the cpm.conf file.
 unsigned char init()
 {
     FILE *fp = NULL;
@@ -60,12 +56,11 @@ unsigned char init()
     return 0;
 }
 
-// Function to display an existing config
-// in the console.
+// Function to display an existing config in the console.
 void show_config(Config *config)
 {
     int i = 0;
-    Dependency *d = NULL;
+    Dependency *dependency = NULL;
 
     if (config->name)
         printf("Name : %s\n", config->name);
@@ -75,26 +70,26 @@ void show_config(Config *config)
         printf("Author : %s\n", config->author);
     if (config->version)
         printf("Version : %s\n", config->version);
-    while (i < DEPENDENCIES_LIMIT && (d = config->dependencies[i++]))
-        printf("Dependency n°%d : %s==%s\n", i, d->name, d->version);
+    while (i < DEPENDENCIES_LIMIT && (dependency = config->dependencies[i++]))
+        if (dependency->name && dependency->version)
+            printf("Dependency n°%d : %s==%s\n", i, dependency->name, dependency->version);
 }
 
-// Function to free the config the cleanest
-// way possible.
+// Function to free the config the cleanest way possible.
 void destroy_config(Config *config)
 {
     int i = 0;
-    Dependency *d = NULL;
+    Dependency *dependency = NULL;
 
     free(config->name);
     free(config->description);
     free(config->author);
     free(config->version);
-    while (i < DEPENDENCIES_LIMIT && (d = config->dependencies[i++]))
+    while (i < DEPENDENCIES_LIMIT && (dependency = config->dependencies[i++]))
     {
-        free(d->name);
-        free(d->version);
-        free(d);
+        free(dependency->name);
+        free(dependency->version);
+        free(dependency);
     }
     free(config->dependencies);
     free(config);

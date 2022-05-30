@@ -1,6 +1,8 @@
 #ifndef _CPM_SET_H_
 #define _CPM_SET_H_
 
+#define DELIM_QUOTES 1
+
 typedef struct s_set
 {
     char *key;
