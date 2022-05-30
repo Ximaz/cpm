@@ -12,3 +12,16 @@ This project has only one purpose : help me to improve my C coding skill. You ca
 - [ ] Be able to search on a free market place some dependencies.
     - [ ] Setting up ``cURL`` localy using the tool itself.
     - [ ] Searching through ``GitHub``.
+
+# Example CPM configuration
+
+```conf
+[INFO]
+name=Project Name
+description=Project Desc
+version=2.0.1
+author=Ximaz
+
+[DEPENDENCIES]
+curl=7.86.1
+```

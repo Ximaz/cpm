@@ -1,0 +1,5 @@
+cpm
+libcpm.a
+cpm.example.conf
+obj/
+.vscode
