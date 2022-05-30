@@ -6,8 +6,6 @@
 #include "../include/error.h"
 #include "../include/parser.h"
 
-#define DEBUG 0
-
 unsigned char is_valid_section(char *buffer)
 {
     if (strcmp(buffer, "INFO") == 0)
