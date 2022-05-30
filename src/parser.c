@@ -24,22 +24,22 @@ unsigned char set_config_info(Config *config, char *field)
         return !success;
     if (strcmp(set->key, "name") == 0 && !config->name)
     {
-        config->name = (char *) malloc(sizeof(char) * strlen(set->value));
+        config->name = (char *)malloc(sizeof(char) * strlen(set->value));
         strcpy(config->name, set->value);
     }
     else if (strcmp(set->key, "description") == 0 && !config->description)
     {
-        config->description = (char *) malloc(sizeof(char) * strlen(set->value));
+        config->description = (char *)malloc(sizeof(char) * strlen(set->value));
         strcpy(config->description, set->value);
     }
     else if (strcmp(set->key, "version") == 0 && !config->version)
     {
-        config->version = (char *) malloc(sizeof(char) * strlen(set->value));
+        config->version = (char *)malloc(sizeof(char) * strlen(set->value));
         strcpy(config->version, set->value);
     }
     else if (strcmp(set->key, "author") == 0 && !config->author)
     {
-        config->author = (char *) malloc(sizeof(char) * strlen(set->value));
+        config->author = (char *)malloc(sizeof(char) * strlen(set->value));
         strcpy(config->author, set->value);
     }
     else
@@ -53,9 +53,9 @@ unsigned char set_config_dependency(Config *config, char *field, unsigned char d
     Set *set = new_set(field);
     Dependency *dependency = (Dependency *)malloc(sizeof(Dependency));
 
-    if (dependency_index == DEPENDENCIES_LIMIT)
+    if (dependency_index == _CPM_DEP_LIM)
     {
-        perror(_CPM_LIMIT_DEPENDENCY);
+        perror(_CPM_MAX_DEP_ERR);
         free(dependency);
         return 0;
     }
@@ -66,9 +66,9 @@ unsigned char set_config_dependency(Config *config, char *field, unsigned char d
     }
     if (!dependency)
         return 0;
-    dependency->name = (char *) malloc(sizeof(char) * strlen(set->key));
+    dependency->name = (char *)malloc(sizeof(char) * strlen(set->key));
     strcpy(dependency->name, set->key);
-    dependency->version = (char *) malloc(sizeof(char) * strlen(set->value));
+    dependency->version = (char *)malloc(sizeof(char) * strlen(set->value));
     strcpy(dependency->version, set->value);
     config->dependencies[dependency_index] = dependency;
     destroy_set(set);
@@ -99,7 +99,7 @@ size_t longest_line_length(char *str)
     return (c > h) ? c : h;
 }
 
-unsigned char parse_cpm_config(char *raw_config, Config *config)
+unsigned char parse_config(char *raw_config, Config *config)
 {
     int buffer_i = 0;
     size_t max_buffer_length = longest_line_length(raw_config);
@@ -152,7 +152,7 @@ unsigned char parse_cpm_config(char *raw_config, Config *config)
                 current_section = DEPENDENCIES;
             else
             {
-                printf(_CPM_UNKNOWNED_SECTION, buffer);
+                printf(_CPM_UNK_SEC_ERR, buffer);
                 free(buffer);
                 return 3;
             }
@@ -164,7 +164,3 @@ unsigned char parse_cpm_config(char *raw_config, Config *config)
     free(buffer);
     return 0;
 }
-
-// void write_cpm_config(Config *config, char const *path)
-// {
-// }

@@ -7,5 +7,6 @@
 
 size_t get_file_length(FILE *fp);
 char *read_cpm_conf(char const *path);
+void write_cpm_conf(char const *path, char const *raw_config);
 
 #endif // _CPM_UTIL_H_

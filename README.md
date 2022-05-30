@@ -9,7 +9,7 @@ This project has only one purpose : help me to improve my C coding skill. You ca
         - [x] Allowing values starting and ending by ``"``.
 - [x] Be able to write a default CPM configuration.
     - [x] Be able to write a file.
-    - [ ] Be able to parse config to text.
+    - [x] Be able to parse config to text.
 - [ ] Be able to search on a free market place some dependencies.
     - [ ] Setting up ``cURL`` localy using the tool itself.
     - [ ] Searching through ``GitHub``.

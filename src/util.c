@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../include/util.h"
 #include "../include/error.h"
 
@@ -30,9 +31,31 @@ char *read_cpm_conf(char const *path)
         return NULL;
     if (fread(buffer, 1, length, fp) < length)
     {
+        fclose(fp);
         free(buffer);
         return NULL;
     }
     fclose(fp);
     return buffer;
+}
+
+void write_cpm_conf(char const *path, char const *raw_config)
+{
+    FILE *fp = fopen(path, "w+");
+    size_t length = 0;
+
+    if (!raw_config)
+        return;
+    if (!fp)
+    {
+        perror(_CPM_PERM_ERR);
+        return;
+    }
+    length = strlen(raw_config);
+    if (fwrite(raw_config, length, 1, fp) < length)
+    {
+        fclose(fp);
+        return;
+    }
+    fclose(fp);
 }

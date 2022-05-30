@@ -23,7 +23,6 @@ typedef enum e_section
     NONE = 0
 } Section;
 
-unsigned char parse_cpm_config(char *raw_config, Config *config);
-// void write_cpm_conf(Config *config, char const *path);
+unsigned char parse_config(char *raw_config, Config *config);
 
 #endif // _CPM_PARSER_H_
