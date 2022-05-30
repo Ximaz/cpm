@@ -7,7 +7,7 @@ void get_key(char *str, Set *set)
 {
     size_t i = 0;
     unsigned char c;
-    char *key = (char *)malloc(sizeof(char) * strlen(str));
+    char *key = (char *)calloc(strlen(str), sizeof(char));
 
     if (!key)
         return;
@@ -15,8 +15,8 @@ void get_key(char *str, Set *set)
         key[i++] = c;
     if (*key != 0)
         key[i] = 0;
-    set->key = (char *) malloc(sizeof(char) * i);
-    strcpy(set->key, key);
+    set->key = (char *)calloc(i + 1, sizeof(char));
+    strncpy(set->key, key, i);
     free(key);
 }
 
@@ -26,7 +26,7 @@ void get_value(char *str, Set *set)
     size_t j = 0;
     unsigned char c;
     unsigned char reading_value = 0;
-    char *value = (char *)malloc(sizeof(char) * strlen(str));
+    char *value = (char *)calloc(strlen(str), sizeof(char));
 
     if (!value)
         return;
@@ -49,8 +49,8 @@ void get_value(char *str, Set *set)
         value[i] = 0;
         j = i;
     }
-    set->value = (char *) malloc(sizeof(char) * j);
-    strcpy(set->value, value);
+    set->value = (char *)calloc(j + 1, sizeof(char));
+    strncpy(set->value, value, j);
     free(value);
 }
 

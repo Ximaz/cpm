@@ -10,6 +10,7 @@ This project has only one purpose : help me to improve my C coding skill. You ca
 - [x] Be able to write a default CPM configuration.
     - [x] Be able to write a file.
     - [x] Be able to parse config to text.
+- [x] Securing buffers writings.
 - [ ] Be able to search on a free market place some dependencies.
     - [ ] Setting up ``cURL`` localy using the tool itself.
     - [ ] Searching through ``GitHub``.

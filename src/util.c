@@ -26,10 +26,10 @@ char *read_cpm_conf(char const *path)
         return NULL;
     }
     length = get_file_length(fp);
-    buffer = (char *)malloc(sizeof(char) * length);
+    buffer = (char *)calloc(length + 1, sizeof(char));
     if (!buffer)
         return NULL;
-    if (fread(buffer, 1, length, fp) < length)
+    if (fread(buffer, length, 1, fp) < 1)
     {
         fclose(fp);
         free(buffer);
