@@ -15,7 +15,7 @@ This project has only one purpose : help me to improve my C coding skill. You ca
 
 # Example CPM configuration
 
-```conf
+```ini
 [INFO]
 name=Project Name
 description=Project Desc
