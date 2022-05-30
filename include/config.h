@@ -7,7 +7,7 @@
 #define _CPM_DEP_LIM 64
 
 // Example of configuration. Will be used at the init.
-#define _CPM_DEF_CONF "[INFO]\nname=\"\"\ndescription=\"\"\nauthor=\"\"\nversion=\"\"\n\n[DEPENDENCIES]\n"
+#define _CPM_DEF_CONF "[INFO]\nname=\"%s\"\ndescription=\"%s\"\nauthor=\"%s\"\nversion=\"%s\"\n\n[DEPENDENCIES]\n"
 
 unsigned char init_config();
 void show_config(Config *config);

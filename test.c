@@ -8,6 +8,7 @@ int main(void)
     if (!config)
         return 1;
     show_config(config);
+    write_config(config);
     destroy_config(config);
     return 0;
 }

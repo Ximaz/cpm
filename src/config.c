@@ -190,7 +190,7 @@ char *get_raw_config(Config *config)
     raw_config = (char *)malloc(sizeof(char) * length);
     if (!raw_config)
         return NULL;
-    sprintf(raw_config, "[INFO]\nname=\"%s\"\ndescription=\"%s\"\nversion=\"%s\"\nauthor=\"%s\"\n\n[DEPENDENCIES]\n", config->name, config->description, config->version, config->author);
+    sprintf(raw_config, _CPM_DEF_CONF, config->name, config->description, config->version, config->author);
     if (dependencies_length_config(config) == 0)
         return raw_config;
     while (i < _CPM_DEP_LIM && (dependency = config->dependencies[i++]))
